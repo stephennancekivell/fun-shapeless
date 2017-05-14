@@ -192,55 +192,7 @@ Even if we have instance.
 
 ---
 
-Tuples
-
-```scala
-val tuple: (Int, Double, String) = (1, 2.0, "three")
-```
-
----
-
-Imagine we're making some code ...
-
-```scala
-def processTuple2ii(t: (Int, Int))
-def processTuple2si(t: (String, Int))
-def processTuple2is(t: (Int, String))
-```
-
----
-
-Type classes to remove boiler plate
-
-```scala
-def processTuple[A,B](t: (A,B))(
-implicit
-handlerA: Handler[A],
-handlerB: Handler[B])
-```
-
----
-
-This is great, we are so smart
-
----
-
-```scala
-def processTuple3[A,B,C](t: (A,B,C))
-```
-
----
-
-```scala
-def processTuple3[A,B,C](t: (A,B,C))
-def processTuple4[A,B,C,D](t: (A,B,C,D))
-```
-
-boiler plate is back
-
----
-
-# We need a thing ...
+# Can we do better..
 
 `List[A]`, is fixed to one type
 
