@@ -1,11 +1,11 @@
 class: center, middle
 
 # Lists, Types and Generic Code
-pattern matching to pattern smashing
+Pattern matching to Pattern smashing
 
 Tricks with list of types.
 
-Working with lists and multiple types, Why List[Any] is bad and how to use ADT's Typeclasses and HList have more reliable code.
+Working with lists and multiple types. Why List[Any] is bad and how ADT's, Type classes and HList can help is write awesome reliable code.
 
 by Stephen Nancekivell
 
@@ -13,11 +13,15 @@ by Stephen Nancekivell
 
 ---
 
+# List
+
 ```scala
 val xs: Seq[Any] = List(1, 2.1, "three")
 ```
 
 ---
+
+# List
 
 ```scala
 xs map {
@@ -31,6 +35,8 @@ But what happens if we add a new type to the list ?
 
 ---
 
+# List
+
 Runtime Error
 
 ```scala
@@ -39,11 +45,27 @@ scala.MatchError: 4 (of class java.lang.Long)
 
 ---
 
-ADT
+# ADT
 
 algebraic data types
 
 ---
+
+# ADT
+
+```scala
+sealed trait Number
+case class IntNumber(i: Int) extends Number
+case class DoubleNumber(d: Double) extends Number
+case class StringNumber(s: String) extends Number
+
+val ys: Seq[Number] =
+  Seq(IntNumber(1), DoubleNumber(2.1), StringNumber("three"))
+```
+
+---
+
+# ADT
 
 ```scala
 sealed trait Number
@@ -57,17 +79,20 @@ val ys: Seq[Number] =
 ys map {
   case IntNumber(i) => ???
   case DoubleNumber(d) => ???
-  case StringNumber(s) => ???
 }
 ```
 
+what happens ?
+
 ---
+
+# ADT
 
 Compilier Error
 
 ```scala
 cmd18.sc:1: match may not be exhaustive.
-It would fail on the following inputs: DoubleNumber(_), StringNumber(_)
+It would fail on the following inputs: StringNumber(_)
 ```
 
 ```scala
@@ -76,7 +101,7 @@ scalacOptions += "-Xfatal-warnings"
 
 ---
 
-Typeclass
+# Type Class
 
 ```scala
 trait NumberHandler[A] {
@@ -100,29 +125,41 @@ processNumber("three")
 
 ---
 
+# Type Class
+
 ```scala
 val x: Long = 4l
 processNumber(x)
 ```
 
-what happens
+what happens ?
 ---
+
+# Type Class
+
+```scala
+val x: Long = 4l
+processNumber(x)
+```
+
+what happens ?
 
 Complier Error
 
 ```scala
-cmd6.sc:1: could not find implicit value for parameter handler: $sess.cmd4.NumberHandler[Long]
+cmd6.sc:1: could not find implicit value for
+  parameter handler: $sess.cmd4.NumberHandler[Long]
 ```
 
 ---
 
-Typeclass
+# Type Class
 
 Ad-hoc polymorphism
 
 ---
 
-Typeclass in the list
+# Type Class in List
 
 ```scala
 val xs: Seq[Any] = List(1, 2.1, "three")
@@ -132,17 +169,26 @@ xs map processNumber
 
 ---
 
+# Type Class in List
+
+```scala
+val xs: Seq[Any] = List(1, 2.1, "three")
+
+xs map processNumber
+```
+
 Compilier Error
 
 ```scala
-cmd8.sc:1: could not find implicit value for parameter handler: $sess.cmd4.NumberHandler[A]
+cmd8.sc:1: could not find implicit value for
+  parameter handler: $sess.cmd4.NumberHandler[A]
 ```
 
-Even though we have processNumber for Int Double and String scalac cant prove it.
+Even if we have instance.
 
 ---
 
-Compile time vs Runtime
+# Compile time vs Runtime
 
 ---
 
@@ -164,7 +210,7 @@ def processTuple2is(t: (Int, String))
 
 ---
 
-Typeclasses to remove boiler plate
+Type classes to remove boiler plate
 
 ```scala
 def processTuple[A,B](t: (A,B))(
@@ -194,22 +240,28 @@ boiler plate is back
 
 ---
 
-We need a thing ...
+# We need a thing ...
 
-List[A], is fixed to one type
+`List[A]`, is fixed to one type
 
 (A,B) tuple is fixed to its length
 
 ---
 
-HList
+# HList
 
 ---
 
+# HList
+
+```scala
 HList[A,B < HList]
+```
 
 
 ---
+
+# HList
 
 ```scala
 sealed trait HList
@@ -219,6 +271,8 @@ case class ::[+H, +T <: HList](head: H, tail: T) extends HList
 ```
 
 ---
+
+# HList
 
 ```scala
 sealed trait HList
@@ -236,32 +290,54 @@ res3: String = "three"
 res5: String :: HNil = three :: HNil
 ```
 
-Also map and flatMap, but not today..
+Also map and flatMap..
 ---
 
+# HList
+
 ```scala
+val xs = 1 :: 2.0 :: "three" :: HNil
+
 xs.take(5)
 ```
 
-what happens
+what happens ?
 
 ---
+
+# HList
+
+```scala
+val xs = 1 :: 2.0 :: "three" :: HNil
+
+xs.take(5)
+```
+
+what happens ?
 
 Compilier error
 
 ```scala
-xs.take(5) 
-cmd26.sc:1: Implicit not found: shapeless.Ops.Take[Int :: Double :: String :: shapeless.HNil, shapeless.Succ[shapeless.Succ[shapeless.Succ[shapeless.Succ[shapeless.Succ[shapeless._0]]]]]]. You requested to take shapeless.Succ[shapeless.Succ[shapeless.Succ[shapeless.Succ[shapeless.Succ[shapeless._0]]]]] elements, but the HList Int :: Double :: String :: shapeless.HNil is too short.
+cmd26.sc:1: Implicit not found:
+ shapeless.Ops.Take[
+   Int :: Double :: String :: shapeless.HNil,
+   shapeless.Succ[shapeless.Succ[shapeless.Succ[shapeless.Succ[shapeless.Succ[shapeless._0]]]]
+   ]].
+   You requested to take
+   shapeless.Succ[shapeless.Succ[shapeless.Succ[shapeless.Succ[shapeless.Succ[shapeless._0]]]]]
+   elements, but the HList Int :: Double :: String :: shapeless.HNil is too short.
 val res26 = xs.take(5)
-                   ^
-Compilation Failed
 ```
 
 ---
 
-Compilier Magic
+# Compilier So Smart
 
 ---
+
+# HList
+
+concat
 
 ```scala
 val a = 1 :: 2.0 :: HNil 
@@ -269,14 +345,30 @@ a: Int :: Double :: HNil = 1 :: 2.0 :: HNil
 val b = 2 :: "three" :: HNil 
 b: Int :: String :: HNil = 2 :: three :: HNil
 a ++ b 
-res21: Int :: Double :: Int :: String :: HNil = 1 :: 2.0 :: 2 :: three :: HNil
+res21: Int :: Double :: Int :: String :: HNil =
+    1 :: 2.0 :: 2 :: three :: HNil
 ```
 
 ---
 
+# HList
+
 Have our cake and eat it too.
 
 ---
+
+# HList
+
+```scala
+def giveMe = {
+  if (Random.nextBoolean) 1 else "two"
+}
+@ val xy = giveMe :: giveMe :: HNil
+```
+
+---
+
+# HList
 
 ```scala
 def giveMe = {
@@ -286,19 +378,23 @@ def giveMe = {
 xy: Any :: Any :: HNil = two :: 1 :: HNil
 ```
 
----
-
 Cant build HList at runtime :'(
 
 ---
+
+# HList
 
 Now, more tricks
 
 ---
 
+# HList
+
 Type level recursion
 
 ---
+
+# HList
 
 ```scala
 trait Encoder[A] {
@@ -314,6 +410,8 @@ implicit val stringEncoder = ???
 
 ```
 ---
+
+# HList
 
 ```scala
 implicit val nillEncoder = new Encoder[HNil] {
@@ -333,11 +431,17 @@ hListEncoder[Int :: Double :: String :: HNil]
 
 ---
 
+# HList
+
 Thats great but I dont use HList anywhere in my code..
 
 ---
 
-Generic[T]
+# Generic
+
+`Generic[T]`
+
+Generic makes HList's from case classes
 
 ```scala
 import shapeless.Generic
@@ -350,6 +454,8 @@ res24: genFoo.Repr = 1 :: 2.0 :: three :: HNil
 ```
 
 ---
+
+# Generic
 
 ```scala
 implicit def genericEncoder[A, H <: HList](
@@ -370,4 +476,11 @@ encode(Foo(1, 2.0, "three"))
 
 ---
 
-Thank you.
+# Thank you.
+
+further reading
+
+* Shapeless, Miles Sabin, 2011
+* The Type Astronaut's Guide to Shapeless, Dave Gurnell, book 2016
+* Roll your Own Shapeless, Daniel Spiewak, video presentation, scala days 2016
+* Scrap your boiler plate, paper 2003
