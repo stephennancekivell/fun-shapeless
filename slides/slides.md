@@ -33,6 +33,8 @@ xs map {
 
 But what happens if we add a new type to the list ?
 
+.center[.w40[![what happens](./whathappensaddnewtype.jpg)]]
+
 ---
 
 # List
@@ -84,6 +86,8 @@ ys map {
 
 what happens ?
 
+.center[.w25[![what happens](./whathappensmissingcase.jpg)]]
+
 ---
 
 # ADT
@@ -133,6 +137,8 @@ processNumber(x)
 ```
 
 what happens ?
+
+.center[.w50[![what happens](./whathappens.jpg)]]
 ---
 
 # Type Class
@@ -153,9 +159,17 @@ cmd6.sc:1: could not find implicit value for
 
 ---
 
-# Type Class
+# Type Class in List
 
-Ad-hoc polymorphism
+```scala
+val xs: Seq[Any] = List(1, 2.1, "three")
+
+xs map processNumber
+```
+
+what happens ?
+
+.center[.w50[![what happens](./whathappens.jpg)]]
 
 ---
 
@@ -167,15 +181,7 @@ val xs: Seq[Any] = List(1, 2.1, "three")
 xs map processNumber
 ```
 
----
-
-# Type Class in List
-
-```scala
-val xs: Seq[Any] = List(1, 2.1, "three")
-
-xs map processNumber
-```
+what happens ?
 
 Compilier Error
 
@@ -188,7 +194,7 @@ Even if we have instance.
 
 ---
 
-# Compile time vs Runtime
+# Compile Time vs Runtime
 
 ---
 
