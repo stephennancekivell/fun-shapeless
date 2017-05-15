@@ -1,9 +1,6 @@
 class: center, middle
 
 # Lists, Types and Generic Code
-Pattern matching to Pattern smashing
-
-Tricks with list of types.
 
 Working with lists and multiple types. Why List[Any] is bad and how ADT's, Type classes and HList can help is write awesome reliable code.
 
@@ -17,6 +14,18 @@ by Stephen Nancekivell
 
 ```scala
 val xs: Seq[Any] = List(1, 2.1, "three")
+```
+
+---
+
+# List
+
+```scala
+xs map {
+  case i: Int => ???
+  case d: Double => ???
+  case s: String => ???
+}
 ```
 
 ---
@@ -213,7 +222,7 @@ Even if we have instance.
 # HList
 
 ```scala
-HList[A,B < HList]
+HList[A, B <: HList]
 ```
 
 
@@ -260,6 +269,8 @@ xs.take(5)
 ```
 
 what happens ?
+
+.center[.w40[![what happens](./whathappens.jpg)]]
 
 ---
 
@@ -311,18 +322,14 @@ res21: Int :: Double :: Int :: String :: HNil =
 
 # HList
 
-Have our cake and eat it too.
-
----
-
-# HList
-
 ```scala
 def giveMe = {
   if (Random.nextBoolean) 1 else "two"
 }
 @ val xy = giveMe :: giveMe :: HNil
 ```
+
+.center[.w40[![what happens](./whathappens.jpg)]]
 
 ---
 
@@ -340,19 +347,18 @@ Cant build HList at runtime :'(
 
 ---
 
-# HList
+# Encoder Example
 
-Now, more tricks
+Technique used in json parsers etc
+
+* argonaut
+* spray json
+* circe
+* spark database connectors
 
 ---
 
-# HList
-
-Type level recursion
-
----
-
-# HList
+# Encoder Typeclass
 
 ```scala
 trait Encoder[A] {
@@ -385,13 +391,16 @@ implicit def hListEncoder[H, T <: HList](
 }
 
 hListEncoder[Int :: Double :: String :: HNil]
+hListEncoder[Double :: Int :: String :: HNil]
 ```
+
+can call for any permutation!
 
 ---
 
-# HList
+# HList is great
 
-Thats great but I dont use HList anywhere in my code..
+But I dont use it anywhere..
 
 ---
 
